@@ -58,7 +58,7 @@ class _WeatherPageState extends State<WeatherPage> {
         position.latitude,
         position.longitude,
       );
-      String cityName = placemarks[0].locality ?? 'Unknown City';
+      String cityName = placemarks.isNotEmpty ? placemarks[0].locality ?? 'Unknown City' : 'Unknown City';
       await _fetchWeather(cityName);
     } catch (e) {
       setState(() {
@@ -101,6 +101,58 @@ class _WeatherPageState extends State<WeatherPage> {
     }
   }
 
+  Widget _buildWeatherContent() {
+    if (_isLoading) {
+      return const CircularProgressIndicator();
+    } else if (_errorMessage != null) {
+      return Text(
+        _errorMessage!,
+        style: const TextStyle(color: Colors.red),
+      );
+    } else if (_weather != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            _weather!.cityName,
+            style: const TextStyle(
+              fontSize: 24,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Lottie.asset(getWeatherAnimation(_weather?.mainCondition)),
+          const SizedBox(height: 10),
+          Text(
+            '${_weather?.temperature.round() ?? 'N/A'}°C',
+            style: const TextStyle(
+              fontSize: 36,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            _weather?.mainCondition ?? '',
+            style: const TextStyle(
+              fontSize: 24,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _fetchWeatherForCurrentLocation,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            ),
+            child: const Text('Refresh'),
+          ),
+        ],
+      );
+    } else {
+      return Container(); // Empty container if no data
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +160,7 @@ class _WeatherPageState extends State<WeatherPage> {
         title: const Text("Weather App"),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               setState(() {
                 _isSearchVisible = !_isSearchVisible;
@@ -120,7 +172,6 @@ class _WeatherPageState extends State<WeatherPage> {
       backgroundColor: Colors.grey[800],
       body: Column(
         children: [
-          // Input field to enter city name
           if (_isSearchVisible)
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -138,63 +189,9 @@ class _WeatherPageState extends State<WeatherPage> {
               ),
             ),
           const SizedBox(height: 20),
-          // Center everything else
           Expanded(
             child: Center(
-              child: _isLoading
-                  ? const CircularProgressIndicator()
-                  : _errorMessage != null
-                      ? Text(
-                          _errorMessage!,
-                          style: const TextStyle(color: Colors.red),
-                        )
-                      : _weather != null
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // City name
-                                Text(
-                                  _weather!.cityName,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                // Weather animation
-                                Lottie.asset(getWeatherAnimation(
-                                    _weather?.mainCondition)),
-                                const SizedBox(height: 10),
-                                // Temperature
-                                Text(
-                                  '${_weather?.temperature?.round() ?? 'N/A'}°C',
-                                  style: const TextStyle(
-                                    fontSize: 36,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                // Weather condition
-                                Text(
-                                  _weather?.mainCondition ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-
-                                ElevatedButton(
-                                  onPressed: _fetchWeatherForCurrentLocation,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 30, vertical: 15),
-                                  ),
-                                  child: const Text('Refresh'),
-                                ),
-                              ],
-                            )
-                          : Container(), // Empty container if no data
+              child: _buildWeatherContent(),
             ),
           ),
         ],

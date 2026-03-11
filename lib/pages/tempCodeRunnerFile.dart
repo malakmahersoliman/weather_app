@@ -90,12 +90,12 @@ class _WeatherPageState extends State<WeatherPage> {
     return Scaffold(
       backgroundColor: Colors.grey[800],
       appBar: AppBar(
-        title: Text('Weather App'),
+        title: const Text('Weather App'),
         backgroundColor: Colors.blue,
       ),
       body: Center(
         child: _isLoading
-            ? CircularProgressIndicator() // Loading indicator
+            ? const CircularProgressIndicator() // Loading indicator
             : _errorMessage != null
                 ? Text(_errorMessage!) // Error message
                 : Column(
@@ -103,17 +103,17 @@ class _WeatherPageState extends State<WeatherPage> {
                     children: [
                       // City name
                       Text(_weather?.cityName ?? "Unknown City",
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                          style: const TextStyle(fontSize: 24, color: Colors.white)),
                       // Weather animation
                       Lottie.asset(
                           getWeatherAnimation(_weather?.mainCondition)),
                       // Temperature
-                      Text('${_weather?.temperature?.round() ?? 'N/A'}°C',
-                          style: TextStyle(fontSize: 32, color: Colors.white)),
+                      Text('${_weather?.temperature.round() ?? 'N/A'}°C',
+                          style: const TextStyle(fontSize: 32, color: Colors.white)),
                       // Weather condition
                       Text(_weather?.mainCondition ?? "",
-                          style: TextStyle(fontSize: 18, color: Colors.white)),
-                      SizedBox(height: 20),
+                          style: const TextStyle(fontSize: 18, color: Colors.white)),
+                      const SizedBox(height: 20),
                       // Search input
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -123,14 +123,14 @@ class _WeatherPageState extends State<WeatherPage> {
                               _fetchWeather(value);
                             }
                           },
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Search for a city',
                             suffixIcon: Icon(Icons.search),
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
                           _fetchWeatherForCurrentLocation();
@@ -140,7 +140,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 30, vertical: 15),
                         ),
-                        child: Text('Refresh'),
+                        child: const Text('Refresh'),
                       ),
                     ],
                   ),
